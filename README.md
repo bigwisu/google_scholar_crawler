@@ -1,11 +1,11 @@
 # Google Scholar Crawler
 
-This enhanced Google Scholar crawler retrieves publication information, including abstracts, and saves the results to a CSV file.  It builds upon the original `gscrawler` and incorporates significant improvements for robustness, error handling, and proxy support.
+This enhanced Google Scholar crawler retrieves publication information, including abstracts, and saves the results to a TSV file.  It builds upon the original `gscrawler` and incorporates significant improvements for robustness, error handling, and proxy support.
 
 ## Features
 
 * Crawls Google Scholar based on an array of provided keywords.
-* Saves results in a well-formed CSV file, handling commas and quotes within the data.
+* Saves results in a well-formed TSV file, handling commas and quotes within the data.
 * Leverage paid services ScraperAPI to avoid rate limiting and improve reliability.
 * Robust error handling to manage connection issues, missing data, and other unexpected situations.
 * Handles multiple authors correctly.
