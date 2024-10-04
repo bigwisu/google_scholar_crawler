@@ -61,7 +61,7 @@ This enhanced Google Scholar crawler retrieves publication information, includin
 3. **Crawl:**
 
    ```bash
-   python crawl.y
+   python3.6 crawl.py
    ```
 
 4. **Output:**
