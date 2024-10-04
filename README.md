@@ -83,3 +83,4 @@ Wisu Suntoyo
 
 * Byunghyun Ban (for the original `gscrawler` code)
 * The `scholarly` library developers
+* Gemini code assist
