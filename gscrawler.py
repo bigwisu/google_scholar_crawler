@@ -29,7 +29,7 @@ def crawl_abstracts(keyword, outfile=None, max_iter=1000):
     print("Crawling Started with keyword <" + keyword + ">.\n")
 
     if not outfile:
-        outfile = "crawler.csv"
+        outfile = "crawler.tsv"
     o_file = open(outfile, 'w')
 
     header = "index\tauthor_id\tyear\tauthor\ttitle\tvenue\tcitations\tpub_url\tgsrank\tcontainer_type\tabstract\n"

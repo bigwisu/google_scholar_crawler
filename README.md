@@ -4,7 +4,7 @@ This enhanced Google Scholar crawler retrieves publication information, includin
 
 ## Features
 
-* Crawls Google Scholar based on a provided keyword.
+* Crawls Google Scholar based on an array of provided keywords.
 * Saves results in a well-formed CSV file, handling commas and quotes within the data.
 * Leverage paid services ScraperAPI to avoid rate limiting and improve reliability.
 * Robust error handling to manage connection issues, missing data, and other unexpected situations.
@@ -65,7 +65,7 @@ This enhanced Google Scholar crawler retrieves publication information, includin
    ```
 
 4. **Output:**
-   Multiple files named generative-ai-nnn.csv
+   Multiple files named generative-ai-nnn.tsv
 
 ## Contributing
 

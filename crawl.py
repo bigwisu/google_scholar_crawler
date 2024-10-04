@@ -16,5 +16,5 @@ queries = [
 
 i = 0
 for query in queries:
-    g.crawl_abstracts(query, f"generative-ai-{i}.csv")
+    g.crawl_abstracts(query, f"generative-ai-{i}.tsv")
     i += 1
