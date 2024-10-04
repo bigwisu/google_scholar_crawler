@@ -1,112 +1,89 @@
 """
-Author : Byunghyun Ban
-Last Modification : 2020.08.19.
-https://github.com/needleworm
-halfbottle@sangsang.farm
+Google Scholar crawler using scholarly and scraperapi. 
+Modified and corrected by Wisu Suntoyo from original code by Byunghyun Ban.
 """
 
 from scholarly import scholarly as S
-from fp.fp import FreeProxy
-import time
+from scholarly import ProxyGenerator
+
+# You should issue your API key from https://www.scraperapi.com/
+SCRAPER_API_KEY = "YOUR SCRAPER API KEY"
 
 def _set_new_proxy():
-    while True:
-        proxy = FreeProxy(rand=True, timeout=1, country_id=["US", "CA"]).get()
-        proxy_works = S.use_proxy(http=proxy, https=proxy)
-        if proxy_works:
-            break
-    print("Working proxy:", proxy)
-    return proxy
+    """
+    Set new proxy by using scraperapi.com
+    """
+    pg = ProxyGenerator()
+    success = pg.ScraperAPI(SCRAPER_API_KEY)
+    S.use_proxy(pg)
+    return
 
 
 def crawl_abstracts(keyword, outfile=None, max_iter=1000):
+    """
+    Crawl google scholar and retrieve author_id, year, author, title, venue, citations, pub_url, gsrank, container_type, abstract.
+    The query will be sorted by relevance.
+    """
     _set_new_proxy()
-    while True:
-        try:
-            search_query = S.search_pubs(keyword)
-            time.sleep(5)
-        except Exception as e:
-            print("Trying new proxy on query base")
-            _set_new_proxy()
-
+    search_query = S.search_pubs(keyword)
     print("Crawling Started with keyword <" + keyword + ">.\n")
 
     if not outfile:
-        outfile = "[Crwaling Results]" + keyword + ".csv"
+        outfile = "crawler.csv"
     o_file = open(outfile, 'w')
 
-    header = "Index, Year, Author, Title, journal, cites, url, abstract\n"
+    header = "index\tauthor_id\tyear\tauthor\ttitle\tvenue\tcitations\tpub_url\tgsrank\tcontainer_type\tabstract\n"
 
     o_file.write(header)
 
     idx = 0
+    err_count = 0
 
     for i in range(max_iter):
         while True:
-            try:
-                time.sleep(5)
-                article = next(search_query).bib
-            except Exception as e:
-                print("Trying new proxy on article read")
-                _set_new_proxy()
+          
+          if err_count > 5:
+            return
 
-        try:
-            title = article["title"]
-        except KeyError:
-            print("Error on Title Info")
+          try:
+            
+            idx += 1
+
+            article = next(search_query)
+
+            citations = article["num_citations"]
+            pub_url = article["pub_url"]
+            gsrank = article["gsrank"]
+            container_type = article["container_type"]
+            author_id = ', '.join(article["author_id"])
+
+            bibliography = article["bib"]
+
+            year = bibliography["pub_year"]
+            author = ', '.join(bibliography["author"])
+            title = bibliography["title"]
+            venue = bibliography["venue"]
+            abstract = bibliography["abstract"]
+
+            print(str(idx) + ' - ' + title)
+
+            o_file.write(str(idx) + "\t")
+            o_file.write(author_id + "\t")
+            o_file.write(year + "\t")
+            o_file.write(author + "\t")
+            o_file.write(title + "\t")
+            o_file.write(venue + "\t")
+            o_file.write(str(citations) + "\t")
+            o_file.write(pub_url + "\t")
+            o_file.write(str(gsrank) + "\t")
+            o_file.write(container_type + "\t")
+            o_file.write(abstract + "\n")
+
+          except Exception as e:
+            err_count += 1
+            print("Skipping error & refresh proxy")
+            _set_new_proxy()
             continue
-
-        try:
-            abstract = article["abstract"]
-            if abstract.startswith("Skip to main content"):
-                continue
-        except KeyError:
-            print("Error on Abstract")
-            continue
-
-        try:
-            year = article["year"]
-        except KeyError:
-            print("Error on year")
-            continue
-
-        try:
-            author = article["author"]
-        except KeyError:
-            print("Error on author")
-            continue
-
-        try:
-            journal = article["journal"]
-        except KeyError:
-            print("Error on journal")
-            continue
-
-        try:
-            url = article["url"]
-        except KeyError:
-            print("Error on url")
-            continue
-
-        try:
-            cites = article["cites"]
-        except KeyError:
-            print("Error on cites")
-            continue
-
-        idx += 1
-
-        citation_form = author + '. "' + title + '." ' + journal + ". " + year
-        print("\n" + citation_form)
-        "Index, Year, Author, Title, journal, cites, url, abstract\n"
-        o_file.write(str(idx) + ", ")
-        o_file.write(year + ", ")
-        o_file.write(author + ", ")
-        o_file.write(title + ", ")
-        o_file.write(journal + ", ")
-        o_file.write(cites + ", ")
-        o_file.write(url + ", ")
-        o_file.write(abstract + "\n")
 
     o_file.close()
 
